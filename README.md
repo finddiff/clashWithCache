@@ -19,7 +19,7 @@
 
 ## Alter patch
 
-1 user golang ccache replace clash build-in lru.cache;
-2 add ccache cache rules not scan all rules by every time;
-3 add altner rules API but not all.
-4 add nutsdb to save dns result.
+<p>1 user golang ccache replace clash build-in lru.cache;</p>
+<p>2 add ccache cache rules not scan all rules by every time;</p>
+<p>3 add altner rules API but not all.</p>
+<p>4 add nutsdb to save dns result.</p>

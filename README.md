@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://github.com/finddiff/clashWithCachhe/raw/master/docs/logo.png" alt="Clash" width="200">
+  <img src="https://github.com/finddiff/clashWithCache/raw/master/docs/logo.png" alt="Clash" width="200">
   <br>fast Clash fork for Dreamacro-clash; add memory cache<br>
 </h1>
 
@@ -17,44 +17,9 @@
   </a>
 </p>
 
-## Features
+## Alter patch
 
-- Local HTTP/HTTPS/SOCKS server with authentication support
-- VMess, Shadowsocks, Trojan, Snell protocol support for remote connections
-- Built-in DNS server that aims to minimize DNS pollution attack impact, supports DoH/DoT upstream and fake IP.
-- Rules based off domains, GEOIP, IP CIDR or ports to forward packets to different nodes
-- Remote groups allow users to implement powerful rules. Supports automatic fallback, load balancing or auto select node based off latency
-- Remote providers, allowing users to get node lists remotely instead of hardcoding in config
-- Netfilter TCP redirecting. Deploy Clash on your Internet gateway with `iptables`.
-- Comprehensive HTTP RESTful API controller
-
-## Premium Features
-
-- TUN mode on macOS, Linux and Windows. [Doc](https://github.com/Dreamacro/clash/wiki/premium-core-features#tun-device)
-- Match your tunnel by [Script](https://github.com/Dreamacro/clash/wiki/premium-core-features#script)
-- [Rule Provider](https://github.com/Dreamacro/clash/wiki/premium-core-features#rule-providers)
-
-## Getting Started
-Documentations are now moved to [GitHub Wiki](https://github.com/Dreamacro/clash/wiki).
-
-## Premium Release
-[Release](https://github.com/Dreamacro/clash/releases/tag/premium)
-
-## Credits
-
-* [riobard/go-shadowsocks2](https://github.com/riobard/go-shadowsocks2)
-* [v2ray/v2ray-core](https://github.com/v2ray/v2ray-core)
-
-## License
-
-This software is released under the GPL-3.0 license.
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FDreamacro%2Fclash.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FDreamacro%2Fclash?ref=badge_large)
-
-## TODO
-
-- [x] Complementing the necessary rule operators
-- [x] Redir proxy
-- [x] UDP support
-- [x] Connection manager
-- [ ] ~~Event API~~
+1 user golang ccache replace clash build-in lru.cache;
+2 add ccache cache rules not scan all rules by every time;
+3 add altner rules API but not all.
+4 add nutsdb to save dns result.

@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Dreamacro/clash/component/resolver"
-	"github.com/Dreamacro/clash/config"
-	"github.com/Dreamacro/clash/hub/executor"
-	"github.com/Dreamacro/clash/log"
-	P "github.com/Dreamacro/clash/proxy"
-	"github.com/Dreamacro/clash/tunnel"
+	"github.com/finddiff/clashWithCache/component/resolver"
+	"github.com/finddiff/clashWithCache/config"
+	"github.com/finddiff/clashWithCache/hub/executor"
+	"github.com/finddiff/clashWithCache/log"
+	P "github.com/finddiff/clashWithCache/proxy"
+	"github.com/finddiff/clashWithCache/tunnel"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"

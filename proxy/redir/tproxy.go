@@ -3,11 +3,11 @@ package redir
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/adapters/inbound"
-	"github.com/Dreamacro/clash/component/socks5"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel"
+	"github.com/finddiff/clashWithCache/adapters/inbound"
+	"github.com/finddiff/clashWithCache/component/socks5"
+	C "github.com/finddiff/clashWithCache/constant"
+	"github.com/finddiff/clashWithCache/log"
+	"github.com/finddiff/clashWithCache/tunnel"
 )
 
 type TProxyListener struct {

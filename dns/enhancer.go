@@ -1,10 +1,10 @@
 package dns
 
 import (
+	"github.com/finddiff/clashWithCache/common/cache"
 	"net"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/component/fakeip"
+	"github.com/finddiff/clashWithCache/component/fakeip"
 )
 
 type ResolverEnhancer struct {
@@ -77,7 +77,7 @@ func NewEnhancer(cfg Config) *ResolverEnhancer {
 
 	if cfg.EnhancedMode != NORMAL {
 		fakePool = cfg.Pool
-		mapping = cache.NewLRUCache(cache.WithSize(4096), cache.WithStale(true))
+		mapping = cache.NewLRUCache(cache.WithSize(4096*16), cache.WithStale(true))
 	}
 
 	return &ResolverEnhancer{

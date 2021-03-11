@@ -3,7 +3,7 @@ package rules
 import (
 	"fmt"
 
-	C "github.com/Dreamacro/clash/constant"
+	C "github.com/finddiff/clashWithCache/constant"
 )
 
 func ParseRule(tp, payload, target string, params []string) (C.Rule, error) {
@@ -35,6 +35,8 @@ func ParseRule(tp, payload, target string, params []string) (C.Rule, error) {
 		parsed, parseErr = NewProcess(payload, target)
 	case "MATCH":
 		parsed = NewMatch(target)
+	case "ALLIP":
+		parsed = NewAllIP(target)
 	default:
 		parseErr = fmt.Errorf("unsupported rule type %s", tp)
 	}

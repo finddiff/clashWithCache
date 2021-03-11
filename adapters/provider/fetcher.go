@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Dreamacro/clash/log"
+	"github.com/finddiff/clashWithCache/log"
 )
 
 var (

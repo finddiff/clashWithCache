@@ -3,8 +3,8 @@ package outbound
 import (
 	"fmt"
 
-	"github.com/Dreamacro/clash/common/structure"
-	C "github.com/Dreamacro/clash/constant"
+	"github.com/finddiff/clashWithCache/common/structure"
+	C "github.com/finddiff/clashWithCache/constant"
 )
 
 func ParseProxy(mapping map[string]interface{}) (C.Proxy, error) {
@@ -73,6 +73,13 @@ func ParseProxy(mapping map[string]interface{}) (C.Proxy, error) {
 			break
 		}
 		proxy, err = NewTrojan(*trojanOption)
+	case "redirect":
+		reDirectOption := &ReDirectOption{}
+		err = decoder.Decode(mapping, reDirectOption)
+		if err != nil {
+			break
+		}
+		proxy, err = NewReDirect(*reDirectOption)
 	default:
 		return nil, fmt.Errorf("unsupport proxy type: %s", proxyType)
 	}

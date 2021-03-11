@@ -3,8 +3,8 @@ package dns
 import (
 	"net"
 
-	"github.com/Dreamacro/clash/component/mmdb"
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/finddiff/clashWithCache/component/mmdb"
+	"github.com/finddiff/clashWithCache/component/trie"
 )
 
 type fallbackIPFilter interface {

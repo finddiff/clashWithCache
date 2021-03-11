@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"net"
 
-	"github.com/Dreamacro/clash/component/ssr/tools"
+	"github.com/finddiff/clashWithCache/component/ssr/tools"
 )
 
 type PacketConn struct {

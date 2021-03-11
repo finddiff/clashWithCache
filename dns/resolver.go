@@ -5,16 +5,16 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/finddiff/clashWithCache/common/cache"
 	"math/rand"
 	"net"
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/common/picker"
-	"github.com/Dreamacro/clash/component/fakeip"
-	"github.com/Dreamacro/clash/component/resolver"
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/finddiff/clashWithCache/common/picker"
+	"github.com/finddiff/clashWithCache/component/fakeip"
+	"github.com/finddiff/clashWithCache/component/resolver"
+	"github.com/finddiff/clashWithCache/component/trie"
 
 	D "github.com/miekg/dns"
 	"golang.org/x/sync/singleflight"
@@ -98,6 +98,7 @@ func (r *Resolver) Exchange(m *D.Msg) (msg *D.Msg, err error) {
 	q := m.Question[0]
 	cache, expireTime, hit := r.lruCache.GetWithExpire(q.String())
 	if hit {
+		//log.Debugln("cache, expireTime, hit := r.lruCache.GetWithExpire(q.String():%v) hit", q.String())
 		now := time.Now()
 		msg = cache.(*D.Msg).Copy()
 		if expireTime.Before(now) {
@@ -124,6 +125,10 @@ func (r *Resolver) exchangeWithoutCache(m *D.Msg) (msg *D.Msg, err error) {
 			msg := result.(*D.Msg)
 
 			putMsgToCache(r.lruCache, q.String(), msg)
+			DnsMsgAdd(DnsMsgMap{
+				key:   q.String(),
+				value: *msg,
+			})
 		}()
 
 		isIPReq := isIPRequest(q)
@@ -298,13 +303,13 @@ type Config struct {
 func NewResolver(config Config) *Resolver {
 	defaultResolver := &Resolver{
 		main:     transform(config.Default, nil),
-		lruCache: cache.NewLRUCache(cache.WithSize(4096), cache.WithStale(true)),
+		lruCache: cache.NewLRUCache(cache.WithSize(4096*16), cache.WithStale(true)),
 	}
 
 	r := &Resolver{
 		ipv6:     config.IPv6,
 		main:     transform(config.Main, defaultResolver),
-		lruCache: cache.NewLRUCache(cache.WithSize(4096), cache.WithStale(true)),
+		lruCache: cache.NewLRUCache(cache.WithSize(4096*16), cache.WithStale(true)),
 		hosts:    config.Hosts,
 	}
 

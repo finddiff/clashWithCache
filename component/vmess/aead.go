@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/finddiff/clashWithCache/common/pool"
 )
 
 type aeadWriter struct {

@@ -4,11 +4,11 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"github.com/finddiff/clashWithCache/common/cache"
 	"net"
 	"time"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/log"
+	"github.com/finddiff/clashWithCache/log"
 
 	D "github.com/miekg/dns"
 )
@@ -94,6 +94,7 @@ func putMsgToCache(c *cache.LruCache, key string, msg *D.Msg) {
 	}
 
 	c.SetWithExpire(key, msg.Copy(), time.Now().Add(time.Second*time.Duration(ttl)))
+
 }
 
 func setMsgTTL(msg *D.Msg, ttl uint32) {

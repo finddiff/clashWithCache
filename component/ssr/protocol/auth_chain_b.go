@@ -4,7 +4,7 @@ import (
 	"net"
 	"sort"
 
-	"github.com/Dreamacro/clash/component/ssr/tools"
+	"github.com/finddiff/clashWithCache/component/ssr/tools"
 )
 
 func init() {

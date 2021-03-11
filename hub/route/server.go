@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel/statistic"
+	C "github.com/finddiff/clashWithCache/constant"
+	"github.com/finddiff/clashWithCache/log"
+	"github.com/finddiff/clashWithCache/tunnel/statistic"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -69,6 +69,8 @@ func Start(addr string, secret string) {
 		r.Mount("/rules", ruleRouter())
 		r.Mount("/connections", connectionRouter())
 		r.Mount("/providers/proxies", proxyProviderRouter())
+
+		r.Mount("/hashmap", hashMapRouter())
 	})
 
 	if uiPath != "" {

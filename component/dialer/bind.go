@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/Dreamacro/clash/common/singledo"
+	"github.com/finddiff/clashWithCache/common/singledo"
 )
 
 // In some OS, such as Windows, it takes a little longer to get interface information

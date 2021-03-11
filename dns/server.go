@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net"
 
-	"github.com/Dreamacro/clash/common/sockopt"
-	"github.com/Dreamacro/clash/context"
-	"github.com/Dreamacro/clash/log"
+	"github.com/finddiff/clashWithCache/common/sockopt"
+	"github.com/finddiff/clashWithCache/context"
+	"github.com/finddiff/clashWithCache/log"
 
 	D "github.com/miekg/dns"
 )
@@ -83,6 +83,7 @@ func ReCreateServer(addr string, resolver *Resolver, mapper *ResolverEnhancer) e
 	handler := newHandler(resolver, mapper)
 	server = &Server{handler: handler}
 	server.Server = &D.Server{Addr: addr, PacketConn: p, Handler: server}
+	initDB(resolver, mapper)
 
 	go func() {
 		server.ActivateAndServe()

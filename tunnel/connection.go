@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/adapters/inbound"
-	N "github.com/Dreamacro/clash/common/net"
-	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/component/resolver"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/context"
+	"github.com/finddiff/clashWithCache/adapters/inbound"
+	N "github.com/finddiff/clashWithCache/common/net"
+	"github.com/finddiff/clashWithCache/common/pool"
+	"github.com/finddiff/clashWithCache/component/resolver"
+	C "github.com/finddiff/clashWithCache/constant"
+	"github.com/finddiff/clashWithCache/context"
 )
 
 func handleHTTP(ctx *context.HTTPContext, outbound net.Conn) {

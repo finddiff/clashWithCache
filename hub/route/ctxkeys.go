@@ -5,6 +5,8 @@ var (
 	CtxKeyProviderName = contextKey("provider name")
 	CtxKeyProxy        = contextKey("proxy")
 	CtxKeyProvider     = contextKey("provider")
+	CtxKeyHashMapKey   = contextKey("hashmapKey")
+	CtxKeyHashMapValue = contextKey("hashmapValue")
 )
 
 type contextKey string

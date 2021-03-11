@@ -4,8 +4,8 @@ import (
 	"context"
 	"net"
 
-	"github.com/Dreamacro/clash/component/pool"
 	"github.com/Dreamacro/go-shadowsocks2/shadowaead"
+	"github.com/finddiff/clashWithCache/component/pool"
 )
 
 type Pool struct {

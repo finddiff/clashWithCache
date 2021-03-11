@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Dreamacro/clash/adapters/provider"
-	"github.com/Dreamacro/clash/tunnel"
+	"github.com/finddiff/clashWithCache/adapters/provider"
+	"github.com/finddiff/clashWithCache/tunnel"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -43,6 +43,7 @@ func updateProvider(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, newError(err.Error()))
 		return
 	}
+	clearHashMap()
 	render.NoContent(w, r)
 }
 

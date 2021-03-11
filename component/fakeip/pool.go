@@ -2,11 +2,11 @@ package fakeip
 
 import (
 	"errors"
+	"github.com/finddiff/clashWithCache/common/cache"
 	"net"
 	"sync"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/component/trie"
+	"github.com/finddiff/clashWithCache/component/trie"
 )
 
 // Pool is a implementation about fake ip generator without storage

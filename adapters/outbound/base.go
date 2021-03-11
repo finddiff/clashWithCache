@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Dreamacro/clash/common/queue"
-	C "github.com/Dreamacro/clash/constant"
+	"github.com/finddiff/clashWithCache/common/queue"
+	C "github.com/finddiff/clashWithCache/constant"
 
 	"go.uber.org/atomic"
 )

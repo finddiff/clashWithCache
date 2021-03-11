@@ -1,15 +1,15 @@
 package dns
 
 import (
+	"github.com/finddiff/clashWithCache/common/cache"
 	"net"
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/clash/common/cache"
-	"github.com/Dreamacro/clash/component/fakeip"
-	"github.com/Dreamacro/clash/component/trie"
-	"github.com/Dreamacro/clash/context"
-	"github.com/Dreamacro/clash/log"
+	"github.com/finddiff/clashWithCache/component/fakeip"
+	"github.com/finddiff/clashWithCache/component/trie"
+	"github.com/finddiff/clashWithCache/context"
+	"github.com/finddiff/clashWithCache/log"
 
 	D "github.com/miekg/dns"
 )
@@ -92,6 +92,11 @@ func withMapping(mapping *cache.LruCache) middleware {
 				}
 
 				mapping.SetWithExpire(ip.String(), host, time.Now().Add(time.Second*time.Duration(ttl)))
+				DnsMapAdd(DnsMap{
+					ipstr:  ip.String(),
+					domain: host,
+					ttl:    ttl,
+				})
 			}
 
 			return msg, nil

@@ -12,6 +12,8 @@ const (
 	Direct AdapterType = iota
 	Reject
 
+	ReDirect
+
 	Shadowsocks
 	ShadowsocksR
 	Snell

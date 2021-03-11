@@ -29,7 +29,7 @@ WINDOWS_ARCH_LIST = \
 	windows-amd64 \
 	windows-arm32v7
 
-all: linux-amd64 darwin-amd64 windows-amd64 # Most used
+all: linux-amd64 linux-armv8 #darwin-amd64 windows-amd64 # Most used
 
 docker:
 	$(GOBUILD) -o $(BINDIR)/$(NAME)-$@

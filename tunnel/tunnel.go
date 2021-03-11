@@ -7,14 +7,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Dreamacro/clash/adapters/inbound"
-	"github.com/Dreamacro/clash/adapters/provider"
-	"github.com/Dreamacro/clash/component/nat"
-	"github.com/Dreamacro/clash/component/resolver"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/context"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel/statistic"
+	"github.com/finddiff/clashWithCache/adapters/inbound"
+	"github.com/finddiff/clashWithCache/adapters/provider"
+	"github.com/finddiff/clashWithCache/component/nat"
+	"github.com/finddiff/clashWithCache/component/resolver"
+	C "github.com/finddiff/clashWithCache/constant"
+	"github.com/finddiff/clashWithCache/context"
+	"github.com/finddiff/clashWithCache/log"
+	"github.com/finddiff/clashWithCache/tunnel/statistic"
 )
 
 var (
@@ -35,6 +35,7 @@ var (
 
 func init() {
 	go process()
+	//go cmTimeOut()
 }
 
 // Add request to queue
@@ -47,6 +48,7 @@ func AddPacket(packet *inbound.PacketAdapter) {
 	select {
 	case udpQueue <- packet:
 	default:
+		go addWorker()
 	}
 }
 
@@ -151,7 +153,7 @@ func resolveMetadata(ctx C.PlainContext, metadata *C.Metadata) (proxy C.Proxy, r
 		proxy = proxies["GLOBAL"]
 	// Rule
 	default:
-		proxy, rule, err = match(metadata)
+		proxy, rule, err = matchHashMap(metadata)
 	}
 	return
 }
@@ -258,6 +260,7 @@ func handleTCPConn(ctx C.ConnContext) {
 	}
 
 	proxy, rule, err := resolveMetadata(ctx, metadata)
+	//log.Debugln("proxy: %v, rule: %v, err: %v", proxy, rule, err)
 	if err != nil {
 		log.Warnln("[Metadata] parse failed: %s", err.Error())
 		return

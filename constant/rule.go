@@ -12,6 +12,7 @@ const (
 	DstPort
 	Process
 	MATCH
+	ALLIP
 )
 
 type RuleType int

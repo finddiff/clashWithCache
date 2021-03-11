@@ -4,7 +4,8 @@ package cache
 
 import (
 	"container/list"
-	"sync"
+	//"sync"
+	CC "github.com/karlseguin/ccache/v2"
 	"time"
 )
 
@@ -54,10 +55,11 @@ func WithStale(stale bool) Option {
 // least recently used entries from memory when (if set) the entries are
 // older than maxAge (in seconds).  Use the New constructor to create one.
 type LruCache struct {
-	maxAge         int64
-	maxSize        int
-	mu             sync.Mutex
-	cache          map[interface{}]*list.Element
+	maxAge  int64
+	maxSize int
+	//mu             sync.Mutex
+	//cache          map[interface{}]*list.Element
+	cache          *CC.Cache
 	lru            *list.List // Front is least-recent
 	updateAgeOnGet bool
 	staleReturn    bool
@@ -68,24 +70,34 @@ type LruCache struct {
 func NewLRUCache(options ...Option) *LruCache {
 	lc := &LruCache{
 		lru:   list.New(),
-		cache: make(map[interface{}]*list.Element),
+		cache: nil,
 	}
 
 	for _, option := range options {
 		option(lc)
 	}
 
+	lc.cache = CC.New(CC.Configure().MaxSize(int64(lc.maxSize)).ItemsToPrune(uint32(int(lc.maxSize / 10))).OnDelete(lc.onDelete))
+
 	return lc
+}
+
+func (c *LruCache) SetOnEvict(fn EvictCallback) {
+	c.onEvict = fn
+}
+
+func (c *LruCache) GetOnEvict() EvictCallback {
+	return c.onEvict
 }
 
 // Get returns the interface{} representation of a cached response and a bool
 // set to true if the key was found.
 func (c *LruCache) Get(key interface{}) (interface{}, bool) {
-	entry := c.get(key)
+	entry := c.cache.Get(key.(string))
 	if entry == nil {
 		return nil, false
 	}
-	value := entry.value
+	value := entry.Value()
 
 	return value, true
 }
@@ -95,21 +107,21 @@ func (c *LruCache) Get(key interface{}) (interface{}, bool) {
 // and a bool set to true if the key was found.
 // This method will NOT check the maxAge of element and will NOT update the expires.
 func (c *LruCache) GetWithExpire(key interface{}) (interface{}, time.Time, bool) {
-	entry := c.get(key)
+	entry := c.cache.Get(key.(string))
 	if entry == nil {
 		return nil, time.Time{}, false
 	}
 
-	return entry.value, time.Unix(entry.expires, 0), true
+	return entry.Value(), entry.Expires(), true
 }
 
 // Exist returns if key exist in cache but not put item to the head of linked list
 func (c *LruCache) Exist(key interface{}) bool {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	_, ok := c.cache[key]
-	return ok
+	entry := c.cache.Get(key.(string))
+	if entry == nil {
+		return false
+	}
+	return true
 }
 
 // Set stores the interface{} representation of a response for a given key.
@@ -124,100 +136,21 @@ func (c *LruCache) Set(key interface{}, value interface{}) {
 // SetWithExpire stores the interface{} representation of a response for a given key and given expires.
 // The expires time will round to second.
 func (c *LruCache) SetWithExpire(key interface{}, value interface{}, expires time.Time) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if le, ok := c.cache[key]; ok {
-		c.lru.MoveToBack(le)
-		e := le.Value.(*entry)
-		e.value = value
-		e.expires = expires.Unix()
-	} else {
-		e := &entry{key: key, value: value, expires: expires.Unix()}
-		c.cache[key] = c.lru.PushBack(e)
-
-		if c.maxSize > 0 {
-			if len := c.lru.Len(); len > c.maxSize {
-				c.deleteElement(c.lru.Front())
-			}
-		}
-	}
-
-	c.maybeDeleteOldest()
+	c.cache.Set(key.(string), value, expires.Sub(time.Now()))
 }
 
 // CloneTo clone and overwrite elements to another LruCache
 func (c *LruCache) CloneTo(n *LruCache) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	n.mu.Lock()
-	defer n.mu.Unlock()
-
-	n.lru = list.New()
-	n.cache = make(map[interface{}]*list.Element)
-
-	for e := c.lru.Front(); e != nil; e = e.Next() {
-		elm := e.Value.(*entry)
-		n.cache[elm.key] = n.lru.PushBack(elm)
-	}
+	c.cache.ForEachFunc(func(key string, i *CC.Item) bool {
+		n.cache.Set(key, i.Value(), i.TTL())
+		return true
+	})
+	return
 }
 
-func (c *LruCache) get(key interface{}) *entry {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	le, ok := c.cache[key]
-	if !ok {
-		return nil
-	}
-
-	if !c.staleReturn && c.maxAge > 0 && le.Value.(*entry).expires <= time.Now().Unix() {
-		c.deleteElement(le)
-		c.maybeDeleteOldest()
-
-		return nil
-	}
-
-	c.lru.MoveToBack(le)
-	entry := le.Value.(*entry)
-	if c.maxAge > 0 && c.updateAgeOnGet {
-		entry.expires = time.Now().Unix() + c.maxAge
-	}
-	return entry
-}
-
-// Delete removes the value associated with a key.
-func (c *LruCache) Delete(key interface{}) {
-	c.mu.Lock()
-
-	if le, ok := c.cache[key]; ok {
-		c.deleteElement(le)
-	}
-
-	c.mu.Unlock()
-}
-
-func (c *LruCache) maybeDeleteOldest() {
-	if !c.staleReturn && c.maxAge > 0 {
-		now := time.Now().Unix()
-		for le := c.lru.Front(); le != nil && le.Value.(*entry).expires <= now; le = c.lru.Front() {
-			c.deleteElement(le)
-		}
-	}
-}
-
-func (c *LruCache) deleteElement(le *list.Element) {
-	c.lru.Remove(le)
-	e := le.Value.(*entry)
-	delete(c.cache, e.key)
+// when a item delete
+func (c *LruCache) onDelete(item *CC.Item) {
 	if c.onEvict != nil {
-		c.onEvict(e.key, e.value)
+		c.onEvict(item.Key(), item.Value())
 	}
-}
-
-type entry struct {
-	key     interface{}
-	value   interface{}
-	expires int64
 }

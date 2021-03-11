@@ -1,4 +1,4 @@
-module github.com/Dreamacro/clash
+module github.com/finddiff/clashWithCache
 
 go 1.16
 
@@ -9,10 +9,13 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/gorilla/websocket v1.4.2
+	github.com/karlseguin/ccache/v2 v2.0.8
 	github.com/miekg/dns v1.1.38
+	github.com/orcaman/concurrent-map v0.0.0-20210106121528-16402b402231
 	github.com/oschwald/geoip2-golang v1.4.0
 	github.com/sirupsen/logrus v1.8.0
 	github.com/stretchr/testify v1.7.0
+	github.com/xujiajun/nutsdb v0.5.0
 	go.uber.org/atomic v1.7.0
 	golang.org/x/crypto v0.0.0-20210218145215-b8e89b74b9df
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777

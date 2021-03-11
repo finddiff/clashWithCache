@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Dreamacro/clash/tunnel/statistic"
+	"github.com/finddiff/clashWithCache/tunnel/statistic"
 	"github.com/gorilla/websocket"
 
 	"github.com/go-chi/chi"

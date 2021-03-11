@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/Dreamacro/clash/common/pool"
+	"github.com/finddiff/clashWithCache/common/pool"
 )
 
 var BufPool = sync.Pool{New: func() interface{} { return &bytes.Buffer{} }}

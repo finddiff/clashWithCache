@@ -21,3 +21,4 @@ vendor
 # macOS file
 .DS_Store
 /cmd
+/bin

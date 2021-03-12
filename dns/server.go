@@ -83,7 +83,7 @@ func ReCreateServer(addr string, resolver *Resolver, mapper *ResolverEnhancer) e
 	handler := newHandler(resolver, mapper)
 	server = &Server{handler: handler}
 	server.Server = &D.Server{Addr: addr, PacketConn: p, Handler: server}
-	initDB(resolver, mapper)
+	loadNDSCache(resolver, mapper)
 
 	go func() {
 		server.ActivateAndServe()

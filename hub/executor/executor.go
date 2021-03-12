@@ -160,6 +160,7 @@ func updateProxies(proxies map[string]C.Proxy, providers map[string]provider.Pro
 }
 
 func updateRules(rules []C.Rule) {
+	rules = tunnel.LoadRule(rules)
 	tunnel.UpdateRules(rules)
 }
 

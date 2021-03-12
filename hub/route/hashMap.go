@@ -114,6 +114,9 @@ func updateHashMap(w http.ResponseWriter, r *http.Request) {
 		var newRule = []C.Rule{}
 		if net.ParseIP(req.Key) != nil {
 			req.Key = req.Key + "/32"
+			tunnel.DeleteIPRule(req.Key)
+		} else {
+			tunnel.DeleteDomainRule(req.Key)
 		}
 		for _, rule := range tunnel.Rules() {
 			if rule.Payload() != req.Key {
@@ -126,9 +129,11 @@ func updateHashMap(w http.ResponseWriter, r *http.Request) {
 			newRule, err := R.NewIPCIDR(req.Key+"/32", req.Value, R.WithIPCIDRNoResolve(true))
 			if err == nil {
 				tunnel.UpdateRules(append([]C.Rule{newRule}, tunnel.Rules()...))
+				tunnel.AddIPRule(req.Key+"/32", req.Value)
 			}
 		} else {
 			tunnel.UpdateRules(append([]C.Rule{R.NewDomainKeyword(req.Key, req.Value)}, tunnel.Rules()...))
+			tunnel.AddDomainRule(req.Key, req.Value)
 		}
 	}
 	tunnel.Cm.Clear()

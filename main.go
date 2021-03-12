@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/finddiff/clashWithCache/Persistence"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -25,6 +26,8 @@ var (
 	externalUI         string
 	externalController string
 	secret             string
+
+	mergeDb bool
 )
 
 func init() {
@@ -35,6 +38,7 @@ func init() {
 	flag.StringVar(&secret, "secret", "", "override secret for RESTful API")
 	flag.BoolVar(&version, "v", false, "show current version of clash")
 	flag.BoolVar(&testConfig, "t", false, "test configuration and exit")
+	flag.BoolVar(&mergeDb, "dm", false, "merger nustdb and exit")
 	flag.Parse()
 
 	flagset = map[string]bool{}
@@ -82,6 +86,11 @@ func main() {
 		return
 	}
 
+	if mergeDb {
+		Persistence.MergeDB()
+		return
+	}
+
 	var options []hub.Option
 	if flagset["ext-ui"] {
 		options = append(options, hub.WithExternalUI(externalUI))
@@ -93,11 +102,13 @@ func main() {
 		options = append(options, hub.WithSecret(secret))
 	}
 
+	Persistence.InitDB()
+
 	if err := hub.Parse(options...); err != nil {
 		log.Fatalln("Parse config error: %s", err.Error())
 	}
-
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	<-sigCh
+	Persistence.CloseDB()
 }

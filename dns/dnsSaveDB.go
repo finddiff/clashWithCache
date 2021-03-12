@@ -3,13 +3,13 @@ package dns
 import (
 	"bytes"
 	"encoding/gob"
+	"github.com/finddiff/clashWithCache/Persistence"
 	"github.com/finddiff/clashWithCache/common/cache"
-	C "github.com/finddiff/clashWithCache/constant"
+	//C "github.com/finddiff/clashWithCache/constant"
 	"github.com/finddiff/clashWithCache/log"
 	"github.com/finddiff/clashWithCache/tunnel"
 	D "github.com/miekg/dns"
 	"github.com/xujiajun/nutsdb"
-	P "path"
 	"sync"
 	"time"
 )
@@ -59,47 +59,8 @@ func handleDnsMap(dnsMap DnsMap) {
 	dnsMap.ttl += 30
 
 	err := db.Update(func(tx *nutsdb.Tx) error {
-		//key := []byte(dnsMap.domain)
-		//val := ""
-
-		//item, err := tx.Get(MapDomainIPs, key)
-		//if err != nil {
-		//	log.Debugln("tx.Get(MapDomainIPs, key:%v) error %v", key, err)
-		//} else {
-		//	for _, ipstr := range strings.Split(string(item.Value), SplitChat) {
-		//		log.Debugln("_, ipstr := range strings.Split(string(item.Value); ipstr:%s", ipstr)
-		//		if len(ipstr) == 0 {
-		//			continue
-		//		}
-		//		if item, err1 := tx.Get(MapDomainIPttl, []byte(dnsMap.domain+ipstr)); err1 == nil || item != nil {
-		//			val += SplitChat + ipstr
-		//		} else {
-		//			err1 := tx.Delete(MapIPDomain, []byte(dnsMap.ipstr))
-		//			if err1 != nil {
-		//				log.Errorln("tx.Delete(MapIPDomain, []byte(dnsMap.ipstr)) error %v", err1)
-		//			}
-		//		}
-		//	}
-		//}
-		//
-		//if len(val) != 0 {
-		//	val += SplitChat
-		//}
-		//val += dnsMap.ipstr
-		//
-		//err = tx.Put(MapDomainIPs, key, []byte(val), 0)
-		//if err != nil {
-		//	log.Errorln("tx.Put(MapDomainIPs, key, []byte(val), 0) %v", err)
-		//}
-		//
-		//log.Debugln("tx.Put(MapDomainIPs, key, []byte(val) key:%v, val:%v", string(key), val)
-
 		//add new to maps
 		log.Debugln("DnsMapAdd add new to maps ip:%s| host:%s| expire Time:%v| ttl:%d|", dnsMap.ipstr, dnsMap.domain, time.Second*time.Duration(0), dnsMap.ttl)
-		//err = tx.Put(MapDomainIPttl, []byte(dnsMap.domain+dnsMap.ipstr), []byte(strconv.Itoa(int(dnsMap.ttl))), 0)
-		//if err != nil {
-		//	log.Errorln("tx.Put(MapDomainIPs, key, val, dnsMap.ttl) %v", err)
-		//}
 		err := tx.Put(MapIPDomain, []byte(dnsMap.ipstr), []byte(dnsMap.domain), 0)
 		if err != nil {
 			log.Errorln("tx.Put(MapDomainIPs, key, []byte(val), 0) %v", err)
@@ -114,7 +75,6 @@ func handleDnsMap(dnsMap DnsMap) {
 
 func IPDomainMapOnEvict(key interface{}, value interface{}) {
 	err := db.Update(func(tx *nutsdb.Tx) error {
-		//tx.Delete(MapDomainIPttl, []byte(key.(string) + value.(string)))
 		tx.Delete(MapIPDomain, []byte(key.(string)))
 		return nil
 	})
@@ -124,48 +84,14 @@ func IPDomainMapOnEvict(key interface{}, value interface{}) {
 }
 
 func loadToIPDomainMap(mapping *cache.LruCache) {
-	err := db.Update(func(tx *nutsdb.Tx) error {
+	err := db.View(func(tx *nutsdb.Tx) error {
 		//db.Merge()
 		entries, _ := tx.GetAll(MapIPDomain)
 		for _, entry := range entries {
-			//fmt.Println(string(entry.Key), string(entry.Value))
-			//domainStr := string(entry.Key)
-			//ipstrList := string(entry.Value)
 			ip := string(entry.Key)
 			domainStr := string(entry.Value)
 			log.Infoln("loadToIPDomainMap SetWithExpire ip:%s| host:%s| expire Time:%v| ttl:%d|", ip, domainStr, time.Second*time.Duration(3), 3)
 			mapping.SetWithExpire(ip, domainStr, time.Now().Add(time.Second*time.Duration(3)))
-			//newValue := ""
-			//lastIP := ""
-			//for _, ipstr := range strings.Split(ipstrList, SplitChat) {
-			//	if len(ipstr) > 0 {
-			//		lastIP = ipstr
-			//		log.Debugln("loadToIPDomainMap tx.Get(MapDomainIPttl, []byte(domainStr+ipstr) domainStr:%s, ipstr:%s", domainStr, ipstr)
-			//		ttlItem, err1 := tx.Get(MapDomainIPttl, []byte(domainStr+ipstr))
-			//		if err1 != nil {
-			//			log.Errorln("tx.Get(MapDomainIPttl, []byte(domainStr+ipstr)) error %v", err1)
-			//			continue
-			//		} else {
-			//			newValue += SplitChat + ipstr
-			//		}
-			//
-			//		//log.Debugln("string(ttlItem.Value):%v", string(ttlItem.Value))
-			//		ttl, err2 := strconv.Atoi(string(ttlItem.Value))
-			//		if err2 != nil {
-			//			log.Errorln("strconv.Atoi(string(ttlItem.Value)) error %v", err2)
-			//			continue
-			//		}
-			//		log.Infoln("loadToIPDomainMap SetWithExpire ip:%s| host:%s| expire Time:%v| ttl:%d|", ipstr, domainStr, time.Second*time.Duration(ttl), ttl)
-			//		mapping.SetWithExpire(ipstr, domainStr, time.Now().Add(time.Second*time.Duration(ttl)))
-			//	}
-			//}
-			//if len(newValue) == 0 {
-			//	log.Infoln("loadToIPDomainMap SetWithExpire ip:%s| host:%s| expire Time:%v| ttl:%d|", lastIP, domainStr, time.Second*time.Duration(3), 3)
-			//	mapping.SetWithExpire(lastIP, domainStr, time.Now().Add(time.Second*time.Duration(3)))
-			//	//tx.Delete(MapDomainIPs, []byte(domainStr))
-			//} else {
-			//	tx.Put(MapDomainIPs, []byte(domainStr), []byte(newValue), 0)
-			//}
 		}
 		return nil
 	})
@@ -256,7 +182,7 @@ func loadToDnsMap(resolver *Resolver) {
 	resolver.lruCache.SetOnEvict(DnsMapOnEvict)
 }
 
-func initDB(resolver *Resolver, mapper *ResolverEnhancer) {
+func loadNDSCache(resolver *Resolver, mapper *ResolverEnhancer) {
 	if startED {
 		return
 	}
@@ -268,19 +194,7 @@ func initDB(resolver *Resolver, mapper *ResolverEnhancer) {
 	gob.Register(&D.AAAA{})
 	gob.Register(&D.PTR{})
 
-	//dbpath := P.Join(C.Path.HomeDir(), "DNSSqlite.DB")
-	dbpath := P.Join(C.Path.HomeDir(), "DNSNUTSDB")
-
-	opt := nutsdb.DefaultOptions
-	opt.Dir = dbpath
-	newdb, err := nutsdb.Open(opt)
-	if err != nil {
-		log.Errorln("newdb, err := nutsdb.Open(opt) err:%v", err)
-	}
-	//newdb.Merge()
-	//defer newdb.Close()
-
-	db = newdb
+	db = Persistence.DB
 
 	loadToIPDomainMap(mapper.mapping)
 	loadToDnsMap(resolver)

@@ -5,18 +5,6 @@
 
 <h4 align="center">A rule-based tunnel in Go.</h4>
 
-<p align="center">
-  <a href="https://github.com/Dreamacro/clash/actions">
-    <img src="https://img.shields.io/github/workflow/status/Dreamacro/clash/Go?style=flat-square" alt="Github Actions">
-  </a>
-  <a href="https://goreportcard.com/report/github.com/Dreamacro/clash">
-    <img src="https://goreportcard.com/badge/github.com/Dreamacro/clash?style=flat-square">
-  </a>
-  <a href="https://github.com/Dreamacro/clash/releases">
-    <img src="https://img.shields.io/github/release/Dreamacro/clash/all.svg?style=flat-square">
-  </a>
-</p>
-
 ## Alter patch
 
 <p>1 user golang ccache replace clash build-in lru.cache;</p>

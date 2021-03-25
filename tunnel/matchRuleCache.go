@@ -5,14 +5,20 @@ import (
 	C "github.com/finddiff/clashWithCache/constant"
 	"github.com/finddiff/clashWithCache/log"
 	CC "github.com/karlseguin/ccache/v2"
-	//CMAP "github.com/orcaman/concurrent-map"
 	"time"
+
+	//CMAP "github.com/orcaman/concurrent-map"
+	HS "github.com/cornelk/hashmap"
+	"golang.org/x/sync/syncmap"
 )
 
 var (
 	//Cm *concurrent_map.ConcurrentMap
 	//Cm     = CMAP.New()
 	Cm = CC.New(CC.Configure().MaxSize(1024 * 64).ItemsToPrune(500))
+	Am = &HS.HashMap{}
+	Bm = syncmap.Map{}
+	//Am.Set("amount", 123)
 	//TimeCm = CMAP.New()
 	//RulChan = make(chan string, 10000)
 	//Cm = concurrent_map.CreateConcurrentMap(1024)
@@ -62,6 +68,8 @@ func DnsPreCache(domain string) {
 
 func setMatchHashMap(key string, value interface{}) {
 	Cm.Set(key, value, time.Minute*60)
+	//Bm.Store(key, value)
+	//Am.Set(key, value)
 	//Cm.Set(key, value)
 	//TimeCm.Set(key, 0)
 }
@@ -80,6 +88,7 @@ func matchHashMap(metadata *C.Metadata) (adapter C.Proxy, hashRule C.Rule, err e
 	//	if dlevel > 3 {
 	//		break
 	//	}
+	//if hashValue, ok := Am.Get(domainStr); ok {
 	if item := Cm.Get(domainStr); item != nil {
 		hashValue := item.Value()
 		//if hashValue, success := Cm.Get(domainStr); success {

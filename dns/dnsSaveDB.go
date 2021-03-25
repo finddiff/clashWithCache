@@ -193,6 +193,8 @@ func loadNDSCache(resolver *Resolver, mapper *ResolverEnhancer) {
 	gob.Register(&D.A{})
 	gob.Register(&D.AAAA{})
 	gob.Register(&D.PTR{})
+	gob.Register(&D.SOA{})
+	gob.Register(&D.CNAME{})
 
 	db = Persistence.DB
 

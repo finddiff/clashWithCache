@@ -2,8 +2,8 @@ NAME=clash
 BINDIR=bin
 VERSION=$(shell git describe --tags || echo "unknown version")
 BUILDTIME=$(shell date -u)
-GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-X "github.com/Dreamacro/clash/constant.Version=$(VERSION)" \
-		-X "github.com/Dreamacro/clash/constant.BuildTime=$(BUILDTIME)" \
+GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-X "github.com/finddiff/clashWithCache/constant.Version=$(VERSION)" \
+		-X "github.com/finddiff/clashWithCache/constant.BuildTime=$(BUILDTIME)" \
 		-w -s -buildid='
 
 PLATFORM_LIST = \
@@ -29,7 +29,7 @@ WINDOWS_ARCH_LIST = \
 	windows-amd64 \
 	windows-arm32v7
 
-all: linux-amd64 linux-armv8 #darwin-amd64 windows-amd64 # Most used
+all: linux-amd64 linux-armv8 windows-amd64 #darwin-amd64 # Most used
 
 docker:
 	$(GOBUILD) -o $(BINDIR)/$(NAME)-$@

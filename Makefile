@@ -1,7 +1,7 @@
 NAME=clash
 BINDIR=bin
 VERSION=$(shell git describe --tags || echo "unknown version")
-BUILDTIME=$(shell date -u)
+BUILDTIME=$(shell date)
 GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-X "github.com/finddiff/clashWithCache/constant.Version=$(VERSION)" \
 		-X "github.com/finddiff/clashWithCache/constant.BuildTime=$(BUILDTIME)" \
 		-w -s -buildid='

@@ -138,7 +138,7 @@ func handleDnsMsg() {
 			continue
 		}
 		err = db.Update(func(tx *nutsdb.Tx) error {
-			log.Debugln("handleDnsMsg tx.Put(MapDomainDnsMsg, []byte(dnsMsg.key:%v), value:%v", dnsMsg.key, value)
+			log.Debugln("handleDnsMsg tx.Put(MapDomainDnsMsg, []byte(dnsMsg.key:%v)", dnsMsg.key)
 			tx.Put(MapDomainDnsMsg, []byte(dnsMsg.key), value, MaxDnsMsgAge)
 			return nil
 		})

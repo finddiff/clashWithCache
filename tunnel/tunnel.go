@@ -153,10 +153,10 @@ func resolveMetadata(ctx C.PlainContext, metadata *C.Metadata) (proxy C.Proxy, r
 		proxy = proxies["GLOBAL"]
 	// Rule
 	default:
-		//starT := time.Now() // get current time
+		starT := time.Now() // get current time
 		proxy, rule, err = matchHashMap(metadata)
-		//elapsed := time.Since(starT)
-		//log.Debugln("metadata:%v, App elapsed: %v", metadata, elapsed)
+		elapsed := time.Since(starT)
+		log.Debugln("matchHashMap elapsed: %v, metadata:%v", elapsed, metadata)
 	}
 	return
 }

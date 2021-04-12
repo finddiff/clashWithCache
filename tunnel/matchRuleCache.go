@@ -2,14 +2,12 @@ package tunnel
 
 import (
 	"fmt"
+	HS "github.com/cornelk/hashmap"
 	C "github.com/finddiff/clashWithCache/constant"
 	"github.com/finddiff/clashWithCache/log"
 	CC "github.com/karlseguin/ccache/v2"
-	"time"
-
-	//CMAP "github.com/orcaman/concurrent-map"
-	HS "github.com/cornelk/hashmap"
 	"golang.org/x/sync/syncmap"
+	"time"
 )
 
 var (
@@ -22,34 +20,7 @@ var (
 	//TimeCm = CMAP.New()
 	//RulChan = make(chan string, 10000)
 	//Cm = concurrent_map.CreateConcurrentMap(1024)
-	//Bc *bigcache.BigCache
 )
-
-//TimeOut Cm rule
-//func cmTimeOut() {
-//	timeTickerChan := time.Tick(time.Second * 10)
-//	for {
-//		select {
-//		case <-timeTickerChan:
-//			for item := range TimeCm.Iter() {
-//				value := item.Val.(int) + 1
-//				if value < 360 {
-//					//log.Debugln("cmTimeOut update %v:%v", item.Key, value)
-//					TimeCm.Set(item.Key, item.Val.(int)+1)
-//				} else {
-//					//log.Debugln("cmTimeOut remove %v",item.Key)
-//					Cm.Remove(item.Key)
-//					TimeCm.Remove(item.Key)
-//				}
-//			}
-//			//case key := <-RulChan:
-//			//	if _, ok := TimeCm.Get(key); ok {
-//			//		TimeCm.Set(key, 0)
-//			//	}
-//		}
-//
-//	}
-//}
 
 func DnsPreCache(domain string) {
 	adapter, hashRule, err := matchHashMap(&C.Metadata{
@@ -75,19 +46,8 @@ func setMatchHashMap(key string, value interface{}) {
 }
 
 func matchHashMap(metadata *C.Metadata) (adapter C.Proxy, hashRule C.Rule, err error) {
-	//startT := time.Now()
-	hoststr := fmt.Sprintf("%v", metadata)
+	domainStr := fmt.Sprintf("%v", metadata)
 
-	//全域名
-	//domainList := strings.Split(hoststr, ".")
-	domainStr := hoststr
-	//domainListlen := len(domainList)
-
-	//for dlevel := 0; dlevel < domainListlen; dlevel++ {
-	//	//一共4级，全名，二级，三级 域名匹配
-	//	if dlevel > 3 {
-	//		break
-	//	}
 	//if hashValue, ok := Am.Get(domainStr); ok {
 	if item := Cm.Get(domainStr); item != nil {
 		hashValue := item.Value()
@@ -116,33 +76,8 @@ func matchHashMap(metadata *C.Metadata) (adapter C.Proxy, hashRule C.Rule, err e
 		}
 	}
 
-	//tc := time.Since(startT)	//计算耗时
-	//log.Infoln("matchHashMap timecost = %v\n", tc)
-
-	//	if len(metadata.Host) < 2 {
-	//		break
-	//	}
-	//
-	//	if dlevel != 0 {
-	//		domainStr = strings.Join(domainList[domainListlen-1-dlevel:], ".")
-	//		domainKey := domainList[domainListlen-dlevel-1]
-	//		if hashValue, success := Cm.Get(domainKey); success {
-	//			switch hashValue.(type) {
-	//			case C.Rule:
-	//				hashRule := hashValue.(C.Rule)
-	//				if hashRule.Match(metadata) {
-	//					adapter, ok := proxies[hashRule.Adapter()]
-	//					if ok {
-	//						setMatchHashMap(hoststr, hashRule)
-	//						return adapter, hashRule, nil
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
 	adapter, hashRule, err = match(metadata)
-	setMatchHashMap(hoststr, hashRule)
+	setMatchHashMap(domainStr, hashRule)
 	log.Debugln("last match adapter=%v, hashRule=%v, err=%v ", adapter, hashRule, err)
 	return
 }

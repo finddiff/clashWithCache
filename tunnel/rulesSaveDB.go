@@ -16,7 +16,7 @@ var (
 )
 
 func AddDomainRule(key string, value string) {
-	err := Persistence.DB.Update(func(tx *nutsdb.Tx) error {
+	err := Persistence.RuleDB.Update(func(tx *nutsdb.Tx) error {
 		//add new to maps
 		log.Debugln("AddDomainRule add new to maps key:%v", key)
 		err := tx.Put(MapDomainRule, []byte(key), []byte(value), 0)
@@ -31,7 +31,7 @@ func AddDomainRule(key string, value string) {
 }
 
 func DeleteDomainRule(key string) {
-	err := Persistence.DB.Update(func(tx *nutsdb.Tx) error {
+	err := Persistence.RuleDB.Update(func(tx *nutsdb.Tx) error {
 		//add new to maps
 		log.Debugln("AddDomainRule add new to maps key:%v", key)
 		err := tx.Delete(MapDomainRule, []byte(key))
@@ -47,7 +47,7 @@ func DeleteDomainRule(key string) {
 
 func LoadDomainRule() []C.Rule {
 	rules = []C.Rule{}
-	err := Persistence.DB.View(func(tx *nutsdb.Tx) error {
+	err := Persistence.RuleDB.View(func(tx *nutsdb.Tx) error {
 		entries, _ := tx.GetAll(MapDomainRule)
 		for _, entry := range entries {
 			key := string(entry.Key)
@@ -64,7 +64,7 @@ func LoadDomainRule() []C.Rule {
 }
 
 func AddIPRule(key string, value string) {
-	err := Persistence.DB.Update(func(tx *nutsdb.Tx) error {
+	err := Persistence.RuleDB.Update(func(tx *nutsdb.Tx) error {
 		//add new to maps
 		log.Debugln("AddDomainRule add new to maps key:%v", key)
 		err := tx.Put(MapIPRule, []byte(key), []byte(value), 0)
@@ -79,7 +79,7 @@ func AddIPRule(key string, value string) {
 }
 
 func DeleteIPRule(key string) {
-	err := Persistence.DB.Update(func(tx *nutsdb.Tx) error {
+	err := Persistence.RuleDB.Update(func(tx *nutsdb.Tx) error {
 		//add new to maps
 		log.Debugln("AddDomainRule add new to maps key:%v", key)
 		err := tx.Delete(MapIPRule, []byte(key))
@@ -95,7 +95,7 @@ func DeleteIPRule(key string) {
 
 func LoadIPRule() []C.Rule {
 	rules = []C.Rule{}
-	err := Persistence.DB.View(func(tx *nutsdb.Tx) error {
+	err := Persistence.RuleDB.View(func(tx *nutsdb.Tx) error {
 		entries, _ := tx.GetAll(MapIPRule)
 		for _, entry := range entries {
 			key := string(entry.Key)

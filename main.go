@@ -88,8 +88,12 @@ func main() {
 
 	if mergeDb {
 		Persistence.MergeDB()
+		Persistence.MergeRuleDB()
 		return
 	}
+
+	Persistence.InitDB()
+	Persistence.InitRuleDB()
 
 	var options []hub.Option
 	if flagset["ext-ui"] {
@@ -102,8 +106,6 @@ func main() {
 		options = append(options, hub.WithSecret(secret))
 	}
 
-	Persistence.InitDB()
-
 	if err := hub.Parse(options...); err != nil {
 		log.Fatalln("Parse config error: %s", err.Error())
 	}
@@ -111,4 +113,5 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	<-sigCh
 	Persistence.CloseDB()
+	Persistence.CloseRuleDB()
 }
